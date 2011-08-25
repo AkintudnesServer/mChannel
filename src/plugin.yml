@@ -1,0 +1,20 @@
+name: mChannel
+main: net.D3GN.MiracleM4n.mChannel.mChannel
+version: 1.7.2
+author: MiracleM4n
+website: http://d3gn.net/
+softdepend: [mChat]
+commands:
+    mchannel:
+        description: 
+        usage: |
+            /<command> - See this info.
+            /<command> create [channelName] - Starts Creating of a new channel. (Follow Prompts)
+            /<command> edit [oldChannelName] - Starts Editing of an existing channel. (Follow Prompts)
+            /<command> remove [channelName] - Deletes channel.
+            /<command> join [channelName] - Joins channelName.
+            /<command> invite [playerName] - Invites playerName to your channel.
+            /<command> accept - Accepts invitation to join channel.
+            /<command> leave - Leaves current channel.
+            /<command> reload - Reloads config.
+        aliases: [mchatchannels, mchannels, mcha]
