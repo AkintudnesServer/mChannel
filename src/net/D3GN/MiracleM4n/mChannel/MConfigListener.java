@@ -3,6 +3,8 @@ package net.D3GN.MiracleM4n.mChannel;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.util.config.Configuration;
 
+import java.util.logging.Level;
+
 public class MConfigListener {
     mChannel plugin;
     Boolean hasChanged = false;
@@ -44,7 +46,7 @@ public class MConfigListener {
                 ""
             );
 
-            plugin.console.sendMessage("[" + pdfFile.getName() + "]" + " config.yml has been updated.");
+            plugin.console.log(Level.INFO, "[" + pdfFile.getName() + "]" + " config.yml has been updated.");
             config.save();
         }
     }

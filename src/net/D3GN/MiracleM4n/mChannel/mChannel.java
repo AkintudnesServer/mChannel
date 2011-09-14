@@ -3,6 +3,8 @@ package net.D3GN.MiracleM4n.mChannel;
 import java.io.File;
 import java.util.HashMap;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.ensifera.animosity.craftirc.CraftIRC;
 import org.bukkit.craftbukkit.CraftServer;
@@ -34,7 +36,7 @@ public class mChannel extends JavaPlugin {
     CraftIRC cIRCHandle;
     
     // Coloring & Configuration
-    ColouredConsoleSender console = null;
+    Logger console = null;
     Configuration channel = null;
     Configuration config = null;
     
@@ -55,7 +57,7 @@ public class mChannel extends JavaPlugin {
         pm = getServer().getPluginManager();
         channel = new Configuration(new File(getDataFolder(), "channel.yml"));
         config = new Configuration(new File(getDataFolder(), "config.yml"));
-        console = new ColouredConsoleSender((CraftServer) getServer());
+        console = getServer().getLogger();
         PluginDescriptionFile pdfFile = getDescription();
         
         getmChat();
@@ -94,13 +96,14 @@ public class mChannel extends JavaPlugin {
             getCommand("mchannel").setExecutor(cSender);
             
             pm.registerEvent(Event.Type.PLAYER_CHAT, pListener, Priority.High, this);
-            console.sendMessage("[" + (pdfFile.getName()) + "]" + " version " + pdfFile.getVersion() + " is enabled!");
-        }     
+
+            console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " version " + pdfFile.getVersion() + " is enabled!");
+        }
     }
 
     public void onDisable() {
         PluginDescriptionFile pdfFile = getDescription();
-        console.sendMessage("[" + (pdfFile.getName()) + "]" + " version " + pdfFile.getVersion() + " is disabled!");
+        console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " version " + pdfFile.getVersion() + " is disabled!");
     }
     
     private void getmChat() {
@@ -110,10 +113,10 @@ public class mChannel extends JavaPlugin {
             mChatB = true;
             getFactions();
             getIRC();
-            console.sendMessage("[" + (pdfFile.getName()) + "]" + " mChat " + (mChatTest.getDescription().getVersion()) + " found now using.");
+            console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " mChat " + (mChatTest.getDescription().getVersion()) + " found now using.");
         } else {
             mChatB = false;
-            console.sendMessage("[" + (pdfFile.getName()) + "]" + " mChat not found shutting down.");
+            console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " mChat not found shutting down.");
             pm.disablePlugin(this);
         }
     }
@@ -123,7 +126,7 @@ public class mChannel extends JavaPlugin {
         Plugin FactionsTest = this.getServer().getPluginManager().getPlugin("Factions");
         if(FactionsTest != null) {
             FactionsB = true;
-            console.sendMessage("[" + (pdfFile.getName()) + "]" + " Factions " + (FactionsTest.getDescription().getVersion()) + " found now using.");
+            console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " Factions " + (FactionsTest.getDescription().getVersion()) + " found now using.");
         } else {
             FactionsB = false;
         }
@@ -135,7 +138,7 @@ public class mChannel extends JavaPlugin {
         if(IRCTest != null) {
             IRCB = true;
             cIRCHandle = (CraftIRC)IRCTest;
-            console.sendMessage("[" + (pdfFile.getName()) + "]" + " CraftIRC " + (IRCTest.getDescription().getVersion()) + " found now using.");
+            console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " CraftIRC " + (IRCTest.getDescription().getVersion()) + " found now using.");
         } else {
             IRCB = false;
         }

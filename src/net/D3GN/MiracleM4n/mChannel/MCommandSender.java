@@ -19,13 +19,15 @@ public class MCommandSender implements CommandExecutor {
     HashMap<Player, Object> createStage = new HashMap<Player, Object>();
     HashMap<Player, String> createName = new HashMap<Player, String>();
     HashMap<Player, String> createType = new HashMap<Player, String>();
-    HashMap<Player, String> createTag = new HashMap<Player, String>();
+    HashMap<Player, String> createPrefix = new HashMap<Player, String>();
+    HashMap<Player, String> createSuffix = new HashMap<Player, String>();
 
     HashMap<Player, Object> editStage = new HashMap<Player, Object>();
     HashMap<Player, String> editOldName = new HashMap<Player, String>();
     HashMap<Player, String> editNewName = new HashMap<Player, String>();
     HashMap<Player, String> editType = new HashMap<Player, String>();
-    HashMap<Player, String> editTag = new HashMap<Player, String>();
+    HashMap<Player, String> editPrefix = new HashMap<Player, String>();
+    HashMap<Player, String> editSuffix = new HashMap<Player, String>();
     
     public boolean onCommand (CommandSender sender, Command command, String label, String[] args) {
         String commandName = command.getName();
@@ -33,6 +35,14 @@ public class MCommandSender implements CommandExecutor {
         if (commandName.equalsIgnoreCase("mchannel")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
+                if (plugin.playersChannel.get(player) == null) {
+                    plugin.playersChannel.put(player, plugin.mAPI.getPlayersDefaultChannel(player));
+                    if (!plugin.joinMessage) {
+                        player.sendMessage("You have joined channel " + plugin.playersChannel.get(player) + ".");
+                    } else {
+                        plugin.getServer().broadcastMessage(mChat.API.ParsePlayerName(player) + " has joined channel " + plugin.playersChannel.get(player) + ".");
+                    }
+		        }
                 if (args.length == 1) {
                     if (args[0].equalsIgnoreCase("leave")) {
                         plugin.getServer().broadcastMessage(mChat.API.ParsePlayerName(player) + " has left channel " + plugin.playersChannel.get(player) + ".");
@@ -43,6 +53,7 @@ public class MCommandSender implements CommandExecutor {
                                 mChat.API.checkPermissions(player, "mchannel.*")) {
                             plugin.cCListener.checkConfig();
                             plugin.cCListener.loadConfig();
+                            player.sendMessage("mChannel config reloaded.");
                             return true;
                         } else {
                             player.sendMessage("You dont have permissions to reload the config.");
@@ -65,10 +76,31 @@ public class MCommandSender implements CommandExecutor {
                         }
                         player.sendMessage("No invitation has been found for your name.");
                         return true;
-                    } else if (args[0].equalsIgnoreCase("")) {
-
-                    } else if (args[0].equalsIgnoreCase("")) {
-
+                    } else if (args[0].equalsIgnoreCase("cList")) {
+                        String sChannels = "";
+                        for (String string : plugin.mAPI.getAllChannels()) {
+                            String channelName = string;
+                            if (mChat.API.checkPermissions(player, "mchannel.join." + string) ||
+                                    mChat.API.checkPermissions(player, "mchannel.*") ||
+                                    mChat.API.checkPermissions(player, "mchannel.join.*")) {
+                                channelName = "&2" + channelName;
+                                sChannels += mChat.API.addColour(channelName) + ", ";
+                            } else {
+                                channelName = "&4" + channelName;
+                                sChannels += mChat.API.addColour(channelName) + ", ";
+                            }
+                        }
+                        player.sendMessage(mChat.API.addColour("&4[&fmChannel&4]&f " + sChannels));
+                        return true;
+                    } else if (args[0].equalsIgnoreCase("pList")) {
+                        String sPlayers = "";
+                        for (Player players : plugin.getServer().getOnlinePlayers()) {
+                            if (plugin.mAPI.getPlayersChannel(player).equals(plugin.mAPI.getPlayersChannel(players))) {
+                               sPlayers += mChat.API.ParseJoinName(players) + ", ";
+                            }
+                        }
+                        player.sendMessage(mChat.API.addColour("&4[&fmChannel&4]&f " + sPlayers));
+                        return true;
                     }
                 } else if (args.length == 2) {
                     if (args[0].equalsIgnoreCase("join")) {
@@ -77,7 +109,7 @@ public class MCommandSender implements CommandExecutor {
                                player.sendMessage("Channel " + args[1] + " has a password please use " + commandName + " join {password} to join this channel."); 
                                return true;
                             } else if ((args[1].equals(plugin.mAPI.getPlayersDefaultChannel(player))) ||
-                                    (args[1].equals(plugin.mAPI.getDefaultChannel()))) {
+                                    (args[1].equals(plugin.mAPI.getGlobalDefaultChannel()))) {
                                 plugin.mAPI.setPlayersChannel(player, args[1]);
                                 if (!plugin.joinMessage) {
                                     player.sendMessage("You have joined channel " + plugin.playersChannel.get(player) + ".");
@@ -182,7 +214,18 @@ public class MCommandSender implements CommandExecutor {
                             return true;
                         }
                     } else if (args[0].equalsIgnoreCase("default")) {
-
+                        if (plugin.mAPI.isChannelReal(args[1])) {
+                            if (mChat.API.checkPermissions(player, "mchannel.default." + args[1]) ||
+                                    mChat.API.checkPermissions(player, "mchannel.*") ||
+                                    mChat.API.checkPermissions(player, "mchannel.default.*")) {
+                                plugin.mAPI.makeDefault(args[1]);
+                                player.sendMessage("Channel " + args[1] + " is now the global default channel.");
+                                return true;
+                            } else {
+                                player.sendMessage("You dont have permissions to make channel " + args[1] + " global default.");
+                                return true;
+                            }
+                        }
                     }
                 } else if (args.length == 3) {
                     if (args[0].equalsIgnoreCase("join")) {
@@ -222,8 +265,8 @@ public class MCommandSender implements CommandExecutor {
                                     createStage.put(player, 2);
                                     createType.put(player, args[2]);
                                     player.sendMessage(createName.get(player) + "'s type will be set to " + args[2] + ".");
-                                    player.sendMessage("Please set the Channels chat tag now by doing,");
-                                    player.sendMessage("/" + commandName + " create tag [ChatTag].");
+                                    player.sendMessage("Please set the Channels prefix now by doing,");
+                                    player.sendMessage("/" + commandName + " create prefix [ChannelPrefix].");
                                     return true;
                                 } else {
                                    //Not Right Type
@@ -233,18 +276,29 @@ public class MCommandSender implements CommandExecutor {
                                 //Not Right Stage
                                 return true;
                             }
-                        } else if (args[1].equalsIgnoreCase("tag")) {
+                        } else if (args[1].equalsIgnoreCase("prefix")) {
                             if (createStage.get(player).equals(2)) {
                                 createStage.put(player, 3);
-                                createTag.put(player, args[2]);
-                                player.sendMessage(createName.get(player) + "'s tag will be set to " + args[2] + ".");
+                                createPrefix.put(player, args[2]);
+                                player.sendMessage(createName.get(player) + "'s prefix will be set to " + args[2] + ".");
+                                player.sendMessage("Please set the Channels suffix now by doing,");
+                                player.sendMessage("/" + commandName + " create suffix [ChannelSuffix].");
+                                return true;
+                            } else {
+                                return true;
+                            }
+                        } else if (args[1].equalsIgnoreCase("suffix")) {
+                            if (createStage.get(player).equals(3)) {
+                                createStage.put(player, 4);
+                                createSuffix.put(player, args[2]);
+                                player.sendMessage(createName.get(player) + "'s suffix will be set to " + args[2] + ".");
                                 if (createType.get(player).equalsIgnoreCase("local")) {
                                     player.sendMessage("Please set Channels distance now by doing,");
                                     player.sendMessage("/" + commandName + " create distance [Distance].");
                                     return true;
                                 } else {
                                     editStage.remove(player);
-                                    plugin.mAPI.createChannel(createName.get(player), createType.get(player), createTag.get(player), intDistance, false);
+                                    plugin.mAPI.createChannel(createName.get(player), createType.get(player), createPrefix.get(player), createSuffix.get(player), intDistance, false);
                                     player.sendMessage("Channel " + createName.get(player) + " has been successfully created.");
                                     return true;
                                 }
@@ -252,7 +306,7 @@ public class MCommandSender implements CommandExecutor {
                                 return true;
                             }
                         } else if (args[1].equalsIgnoreCase("distance")) {
-                            if (createStage.get(player).equals(3)) {
+                            if (createStage.get(player).equals(4)) {
                                 try {
                                     intDistance = new Integer(args[2]);
                                 } catch (NumberFormatException e) {
@@ -261,7 +315,7 @@ public class MCommandSender implements CommandExecutor {
                                 }
                                 editStage.remove(player);
                                 player.sendMessage(createName.get(player) + "'s distance will be set to " + args[2] + ".");
-                                plugin.mAPI.createChannel(createName.get(player), createType.get(player), createTag.get(player), intDistance, false);
+                                plugin.mAPI.createChannel(createName.get(player), createType.get(player), createPrefix.get(player), createSuffix.get(player), intDistance, false);
                                 player.sendMessage("Channel " + createName.get(player) + " has been successfully created.");
                                 return true;
                             } else {
@@ -293,8 +347,8 @@ public class MCommandSender implements CommandExecutor {
                                     editType.put(player, args[2]);
                                     player.sendMessage(editOldName.get(player) + "'s new type set to " + args[2] + ".");
                                     player.sendMessage(editOldName.get(player) + "'s new type set to " + args[2] + ".");
-                                    player.sendMessage("Please set the new Channels tag now by doing,");
-                                    player.sendMessage("/" + commandName + " edit newTag [NewChannelTag].");
+                                    player.sendMessage("Please set the new Channels prefix now by doing,");
+                                    player.sendMessage("/" + commandName + " edit newPrefix [NewChannelPrefix].");
                                     return true;
                                 } else {
                                    //Not Right Type
@@ -304,18 +358,29 @@ public class MCommandSender implements CommandExecutor {
                                 //Not Right Stage
                                 return true;
                             }
-                        } else if (args[1].equalsIgnoreCase("newTag")) {
+                        } else if (args[1].equalsIgnoreCase("newPrefix")) {
                             if (editStage.get(player).equals(3)) {
                                 editStage.put(player, 4);
-                                editTag.put(player, args[2]);
+                                editPrefix.put(player, args[2]);
                                 player.sendMessage(editOldName.get(player) + "'s new tag set to " + args[2] + ".");
+                                player.sendMessage("Please set the new Channels suffix now by doing,");
+                                player.sendMessage("/" + commandName + " edit newSuffix [NewChannelSuffix].");
+                                return true;
+                            } else {
+                                return true;
+                            }
+                        } else if (args[1].equalsIgnoreCase("newSuffix")) {
+                            if (editStage.get(player).equals(4)) {
+                                editStage.put(player, 5);
+                                editSuffix.put(player, args[2]);
+                                player.sendMessage(editOldName.get(player) + "'s new suffix set to " + args[2] + ".");
                                 if (editType.get(player).equalsIgnoreCase("local")) {
                                     player.sendMessage("Please set the new Channels distance now by doing,");
                                     player.sendMessage("/" + commandName + " edit newDistance [Distance].");
                                     return true;
                                 } else {
                                     editStage.remove(player);
-                                    plugin.mAPI.editChannel(editOldName.get(player), editNewName.get(player), editType.get(player), editTag.get(player), intDistance, false);
+                                    plugin.mAPI.editChannel(editOldName.get(player), editNewName.get(player), editType.get(player), editPrefix.get(player), editSuffix.get(player), intDistance, false);
                                     player.sendMessage("Channel " + editOldName.get(player) + " has been successfully edited.");
                                     return true;
                                 }
@@ -323,7 +388,7 @@ public class MCommandSender implements CommandExecutor {
                                 return true;
                             }
                         } else if (args[1].equalsIgnoreCase("newDistance")) {
-                            if (editStage.get(player).equals(4)) {
+                            if (editStage.get(player).equals(5)) {
                                 try {
                                     intDistance = new Integer(args[2]);
                                 } catch (NumberFormatException e) {
@@ -332,7 +397,7 @@ public class MCommandSender implements CommandExecutor {
                                 }
                                 editStage.remove(player);
                                 player.sendMessage(editOldName.get(player) + "'s new distance set to " + args[2] + ".");
-                                plugin.mAPI.editChannel(editOldName.get(player), editNewName.get(player), editType.get(player), editTag.get(player), intDistance, false);
+                                plugin.mAPI.editChannel(editOldName.get(player), editNewName.get(player), editType.get(player), editPrefix.get(player), editSuffix.get(player), intDistance, false);
                                 player.sendMessage("Channel " + editOldName.get(player) + " has been successfully edited.");
                                 return true;
                             } else {

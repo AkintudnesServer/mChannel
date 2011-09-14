@@ -12,7 +12,7 @@ public class mChannelAPI {
         this.plugin = plugin;
     }
 
-    public String getDefaultChannel() {
+    public String getGlobalDefaultChannel() {
     	for (Entry<String, Object> entry : plugin.channelNodeList.entrySet()) {
 			if (plugin.channelNodeList.get(entry.getKey()).equals(true)) {
 				return entry.getKey().replace(".default", "");
@@ -26,7 +26,16 @@ public class mChannelAPI {
             if (mChat.API.checkPermissions(player, "mchannel.default." + entry.getKey().replace(".default", "")))
 				return entry.getKey().replace(".default", "");
 		}
-    	return getDefaultChannel();
+    	return getGlobalDefaultChannel();
+    }
+
+    public String[] getAllChannels() {
+        String aChannels = "";
+    	for (Entry<String, Object> entry : plugin.channelNodeList.entrySet()) {
+            if (entry.getKey().contains(".default"))
+                aChannels += entry.getKey().replace(".default", "") + ",";
+		}
+        return aChannels.split(",");
     }
 	
     public String getChannelType(String channelName) {
@@ -37,10 +46,18 @@ public class mChannelAPI {
     	return "";
     }
     
-    public String getChannelTag(String channelName) {
+    public String getChannelPrefix(String channelName) {
     	if (isChannelReal(channelName)) {
-    		if (plugin.channelNodeList.get(channelName + ".tag").toString() != null)
-    			return plugin.channelNodeList.get(channelName + ".tag").toString();
+    		if (plugin.channelNodeList.get(channelName + ".prefix").toString() != null)
+    			return plugin.channelNodeList.get(channelName + ".prefix").toString();
+    	}
+    	return "";
+    }
+
+    public String getChannelSuffix(String channelName) {
+    	if (isChannelReal(channelName)) {
+    		if (plugin.channelNodeList.get(channelName + ".suffix").toString() != null)
+    			return plugin.channelNodeList.get(channelName + ".suffix").toString();
     	}
     	return "";
     }
@@ -114,6 +131,13 @@ public class mChannelAPI {
     	}
     	return false;
     }
+
+    public String getPlayersChannelInfo(Player player) {
+        String pChannel = plugin.playersChannel.get(player);
+        String pPrefix = getChannelPrefix(pChannel);
+        String pSuffix = getChannelSuffix(pChannel);
+        return pPrefix + pChannel + pSuffix;
+    }
     
     public String getPlayersChannel(Player player) {
     	if(plugin.playersChannel.get(player) == null) {
@@ -154,13 +178,14 @@ public class mChannelAPI {
     	}
     }
     
-    public void createChannel(String channelName, String channelType, String channelTag, Integer channelDistance, Boolean channelDefault) {
+    public void createChannel(String channelName, String channelType, String channelPrefix, String channelSuffix, Integer channelDistance, Boolean channelDefault) {
     	if (!(isChannelReal(channelName))) {
     		plugin.channel.load();
     		plugin.tempChannelMap.putAll(plugin.channelMap);
     		plugin.channelMap.clear();
     		plugin.channelMap.putAll(plugin.tempChannelMap);
-    		plugin.tempChannel.put("tag", channelTag);
+    		plugin.tempChannel.put("prefix", channelPrefix);
+    		plugin.tempChannel.put("suffix", channelSuffix);
     		plugin.tempChannel.put("type", channelType);
     		plugin.tempChannel.put("distance", channelDistance);
     		plugin.tempChannel.put("default", channelDefault);
@@ -189,14 +214,14 @@ public class mChannelAPI {
 		plugin.tempChannel.clear();
     }
 
-    public void editChannel(String oldChannelName, String newChannelName, String channelType, String channelTag, Integer channelDistance, Boolean channelDefault) {
-    	createChannel(newChannelName, channelType, channelTag, channelDistance, channelDefault);
+    public void editChannel(String oldChannelName, String newChannelName, String channelType, String channelPrefix, String channelSuffix, Integer channelDistance, Boolean channelDefault) {
+    	createChannel(newChannelName, channelType, channelPrefix, channelSuffix, channelDistance, channelDefault);
         moveAllInChannel(oldChannelName, newChannelName);
         removeChannel(oldChannelName);
 		plugin.cCListener.loadConfig();
     }
 
     public void makeDefault(String channelName) {
-    	editChannel(channelName, channelName, getChannelType(channelName), getChannelTag(channelName), getChannelDistance(channelName), true);
+    	editChannel(channelName, channelName, getChannelType(channelName), getChannelPrefix(channelName), getChannelSuffix(channelName), getChannelDistance(channelName), true);
     }
 }
