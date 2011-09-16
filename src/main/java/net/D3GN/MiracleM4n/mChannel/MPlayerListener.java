@@ -1,14 +1,13 @@
 package net.D3GN.MiracleM4n.mChannel;
 
-import com.ensifera.animosity.craftirc.CraftIRC;
+import com.massivecraft.factions.Conf;
+import com.massivecraft.factions.FPlayer;
+
 import net.D3GN.MiracleM4n.mChat.mChat;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerListener;
-
-import com.massivecraft.factions.Conf;
-import com.massivecraft.factions.FPlayer;
 
 public class MPlayerListener extends PlayerListener {
 	mChannel plugin;

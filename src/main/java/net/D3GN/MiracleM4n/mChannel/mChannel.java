@@ -7,8 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.ensifera.animosity.craftirc.CraftIRC;
-import org.bukkit.craftbukkit.CraftServer;
-import org.bukkit.craftbukkit.command.ColouredConsoleSender;
+import org.blockface.bukkitstats.CallHome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -94,6 +93,8 @@ public class mChannel extends JavaPlugin {
             mAPI = new mChannelAPI(this);   
             
             getCommand("mchannel").setExecutor(cSender);
+
+            CallHome.load(this);
             
             pm.registerEvent(Event.Type.PLAYER_CHAT, pListener, Priority.High, this);
 
