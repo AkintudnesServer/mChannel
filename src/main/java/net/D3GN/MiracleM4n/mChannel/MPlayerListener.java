@@ -18,50 +18,48 @@ public class MPlayerListener extends PlayerListener {
 
 	public void onPlayerChat(PlayerChatEvent event) {
 		if (event.isCancelled()) return;
-		final Player player = event.getPlayer();
+		Player player = event.getPlayer();
+        String pChannel = plugin.playersChannel.get(player);
 		String msg = event.getMessage();
 		if (msg == null) return;
-		if (plugin.playersChannel.get(player) == null) {
+		if (pChannel == null) {
 			plugin.playersChannel.put(player, plugin.mAPI.getPlayersDefaultChannel(player));
             if (!plugin.joinMessage) {
-                player.sendMessage("You have joined channel " + plugin.playersChannel.get(player) + ".");
+                player.sendMessage("You have joined channel " + pChannel + ".");
             } else {
-                plugin.getServer().broadcastMessage(mChat.API.ParsePlayerName(player) + " has joined channel " + plugin.playersChannel.get(player) + ".");
+                plugin.getServer().broadcastMessage(mChat.API.ParsePlayerName(player) + " has joined channel " + pChannel + ".");
             }
 		}
-		if (plugin.mAPI.getChannelType(plugin.playersChannel.get(player)).equalsIgnoreCase("global")) {
-			event.setFormat(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
-		} else if (plugin.mAPI.getChannelType(plugin.playersChannel.get(player)).equalsIgnoreCase("local")) {
+		if (plugin.mAPI.getChannelType(pChannel).equalsIgnoreCase("local")) {
 			for (Player players : plugin.getServer().getOnlinePlayers()) {
 				if (players.getWorld() != player.getWorld()) {
 					event.getRecipients().remove(players);
-				} else if (players.getLocation().distance(player.getLocation()) > plugin.mAPI.getChannelDistance(plugin.playersChannel.get(player))) {
+				} else if (players.getLocation().distance(player.getLocation()) > plugin.mAPI.getChannelDistance(pChannel)) {
 					event.getRecipients().remove(players);
 				}
 				if(mChat.API.checkPermissions(players, "mchannel.*")) {
 					event.getRecipients().add(players);
 				}
 			}
-			event.setFormat(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
-		} else if (plugin.mAPI.getChannelType(plugin.playersChannel.get(player)).equalsIgnoreCase("private")) {
+		} else if (plugin.mAPI.getChannelType(pChannel).equalsIgnoreCase("private")) {
 			for (Player players : plugin.getServer().getOnlinePlayers()) {
-				if (plugin.playersChannel.get(players).equalsIgnoreCase(plugin.playersChannel.get(player))) {
+				if (plugin.playersChannel.get(players).equalsIgnoreCase(pChannel)) {
                     String eventFormat = event.getFormat();
 				    if (plugin.FactionsB) {
 					    FPlayer me = FPlayer.get(player);
 	                    if (!Conf.chatTagReplaceString.isEmpty()) {
 	                        eventFormat = eventFormat.replace(Conf.chatTagReplaceString, (me.getRelationColor(me.getFaction()) + me.getChatTag()));
 	                    }
-	                    players.sendMessage(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + eventFormat);
+	                    players.sendMessage(eventFormat);
 					} else {
-		                players.sendMessage(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
+		                players.sendMessage(mChat.API.ParseChatMessage(player, msg));
 					}
 				} else if (mChat.API.checkPermissions(players, "mchannel.*")) {
-				    players.sendMessage(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
+				    players.sendMessage(mChat.API.ParseChatMessage(player, msg));
 				}
 			}
             event.setCancelled(true);
-		} else if (plugin.mAPI.getChannelType(plugin.playersChannel.get(player)).equalsIgnoreCase("world")) {
+		} else if (plugin.mAPI.getChannelType(pChannel).equalsIgnoreCase("world")) {
 			for (Player players : plugin.getServer().getOnlinePlayers()) {
 				if (players.getWorld() != player.getWorld()) {
 					event.getRecipients().remove(players);
@@ -70,8 +68,7 @@ public class MPlayerListener extends PlayerListener {
 				    event.getRecipients().add(players);
 				}
 			}
-			event.setFormat(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
-		} else if (plugin.mAPI.getChannelType(plugin.playersChannel.get(player)).equalsIgnoreCase("chunk")) {
+		} else if (plugin.mAPI.getChannelType(pChannel).equalsIgnoreCase("chunk")) {
 			for (Player players : plugin.getServer().getOnlinePlayers()) {
 				if (players.getWorld() != player.getWorld()) {
 					event.getRecipients().remove(players);
@@ -83,51 +80,48 @@ public class MPlayerListener extends PlayerListener {
 				    event.getRecipients().add(players);
 				}
 			}
-			event.setFormat(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
-		} else if (plugin.mAPI.getChannelType(plugin.playersChannel.get(player)).equalsIgnoreCase("password")) {
+        } else if (plugin.mAPI.getChannelType(pChannel).equalsIgnoreCase("password")) {
 			for (Player players : plugin.getServer().getOnlinePlayers()) {
-				if (plugin.playersChannel.get(players).equalsIgnoreCase(plugin.playersChannel.get(player))) {
+				if (plugin.playersChannel.get(players).equalsIgnoreCase(pChannel)) {
                     String eventFormat = event.getFormat();
 				    if (plugin.FactionsB) {
 					    FPlayer me = FPlayer.get(player);
 	                    if (!Conf.chatTagReplaceString.isEmpty()) {
 	                        eventFormat = eventFormat.replace(Conf.chatTagReplaceString, (me.getRelationColor(me.getFaction()) + me.getChatTag()));
 	                    }
-	                    players.sendMessage(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + eventFormat);
+	                    players.sendMessage(eventFormat);
 	                    event.setCancelled(true);
 					} else {
-		                players.sendMessage(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
+		                players.sendMessage(mChat.API.ParseChatMessage(player, msg));
 		                event.setCancelled(true);
 					}
 				} else if (mChat.API.checkPermissions(players, "mchannel.*")) {
-				    players.sendMessage(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
+				    players.sendMessage(mChat.API.ParseChatMessage(player, msg));
 				}
 			}
-		} else if (plugin.mAPI.isChannelTypeIRC(plugin.playersChannel.get(player))) {
+		} else if (plugin.mAPI.isChannelTypeIRC(pChannel)) {
             plugin.cIRCHandle.getIrcUserListFromTag("d3gnTag");
             if (plugin.IRCB) {
-                plugin.cIRCHandle.sendMessageToTag((mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player) + " " + mChat.API.ParseChatMessage(player, msg))), plugin.mAPI.getChannelIRCChannelTag(plugin.playersChannel.get(player)));
+                plugin.cIRCHandle.sendMessageToTag(mChat.API.ParseChatMessage(player, msg), plugin.mAPI.getChannelIRCChannelTag(pChannel));
 		    }
 		    for (Player players : plugin.getServer().getOnlinePlayers()) {
-                if (plugin.playersChannel.get(players).equalsIgnoreCase(plugin.playersChannel.get(player))) {
+                if (plugin.playersChannel.get(players).equalsIgnoreCase(pChannel)) {
                     String eventFormat = event.getFormat();
                     if (plugin.FactionsB) {
                         FPlayer me = FPlayer.get(player);
                         if (!Conf.chatTagReplaceString.isEmpty()) {
                             eventFormat = eventFormat.replace(Conf.chatTagReplaceString, (me.getRelationColor(me.getFaction()) + me.getChatTag()));
                         }
-                        players.sendMessage(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + eventFormat);
+                        players.sendMessage(eventFormat);
                         event.setCancelled(true);
                     } else {
-                        players.sendMessage(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
+                        players.sendMessage(mChat.API.ParseChatMessage(player, msg));
                         event.setCancelled(true);
                     }
                 } else if (mChat.API.checkPermissions(players, "mchannel.*")) {
-                    players.sendMessage(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
+                    players.sendMessage(mChat.API.ParseChatMessage(player, msg));
                 }
 		    }
-        } else {
-			event.setFormat(mChat.API.addColour(plugin.mAPI.getPlayersChannelInfo(player)) + " " + mChat.API.ParseChatMessage(player, msg));
-		}
+        }
 	}
 }

@@ -68,23 +68,7 @@ public class mChannel extends JavaPlugin {
             cListener = new MConfigListener(this);
             
             // Initialize Listeners and Configurations
-            if (!(new File(getDataFolder(), "channel.yml")).exists()) {
-                cCListener.defaultConfig();
-                cCListener.checkConfig();
-                cCListener.loadConfig();
-            } else {
-                cCListener.checkConfig();
-                cCListener.loadConfig();
-            }
-
-            if (!(new File(getDataFolder(), "config.yml")).exists()) {
-                cListener.defaultConfig();
-                cListener.checkConfig();
-                cListener.loadConfig();
-            } else {
-                cListener.checkConfig();
-                cListener.loadConfig();
-            }
+            checkConfigs();
             
             //API Variable Assignment
             API = new mChannelAPI(this);
@@ -142,6 +126,26 @@ public class mChannel extends JavaPlugin {
             console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " CraftIRC " + (IRCTest.getDescription().getVersion()) + " found now using.");
         } else {
             IRCB = false;
+        }
+    }
+    
+    private void checkConfigs() {
+        if (!(new File(getDataFolder(), "channel.yml")).exists()) {
+            cCListener.defaultConfig();
+            cCListener.checkConfig();
+            cCListener.loadConfig();
+        } else {
+            cCListener.checkConfig();
+            cCListener.loadConfig();
+        }
+
+        if (!(new File(getDataFolder(), "config.yml")).exists()) {
+            cListener.defaultConfig();
+            cListener.checkConfig();
+            cListener.loadConfig();
+        } else {
+            cListener.checkConfig();
+            cListener.loadConfig();
         }
     }
 }

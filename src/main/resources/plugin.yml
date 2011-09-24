@@ -1,6 +1,6 @@
 name: mChannel
 main: net.D3GN.MiracleM4n.mChannel.mChannel
-version: 1.7.2
+version: 1.8.1
 author: MiracleM4n
 website: http://d3gn.net/
 softdepend: [mChat]
@@ -17,4 +17,4 @@ commands:
             /<command> accept - Accepts invitation to join channel.
             /<command> leave - Leaves current channel.
             /<command> reload - Reloads config.
-        aliases: [mchatchannels, mchannels, mcha]
+        aliases: [mchatchannels, mchannels, mcha, mchn]

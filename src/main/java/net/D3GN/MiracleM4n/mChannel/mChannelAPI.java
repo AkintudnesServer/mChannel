@@ -131,13 +131,6 @@ public class mChannelAPI {
     	}
     	return false;
     }
-
-    public String getPlayersChannelInfo(Player player) {
-        String pChannel = plugin.playersChannel.get(player);
-        String pPrefix = getChannelPrefix(pChannel);
-        String pSuffix = getChannelSuffix(pChannel);
-        return pPrefix + pChannel + pSuffix;
-    }
     
     public String getPlayersChannel(Player player) {
     	if(plugin.playersChannel.get(player) == null) {
