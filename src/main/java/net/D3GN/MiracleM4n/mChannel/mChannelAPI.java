@@ -77,14 +77,6 @@ public class mChannelAPI {
         }
         return "";
     }
-
-    public String getChannelIRCChannelTag(String channelName) {
-        if (isChannelReal(channelName)) {
-            if (plugin.channelNodeList.get(channelName + ".ircTag").toString() != null)
-                return plugin.channelNodeList.get(channelName + ".ircTag").toString();
-        }
-        return "";
-    }
     
     public Boolean isChannelReal(String channelName) {
         return plugin.channelMap.get(channelName) != null;
@@ -110,11 +102,6 @@ public class mChannelAPI {
         return getChannelType(channelName).equalsIgnoreCase("chunk");
     }
 
-    public Boolean isChannelTypeIRC(String channelName) {
-        return plugin.IRCB
-                && (getChannelType(channelName).equalsIgnoreCase("irc"));
-    }
-
     public Boolean isChannelTypePassword(String channelName) {
         return getChannelType(channelName).equalsIgnoreCase("password");
     }
@@ -134,7 +121,7 @@ public class mChannelAPI {
     
     public String getPlayersChannel(Player player) {
     	if(plugin.playersChannel.get(player) == null) {
-    		plugin.playersChannel.put(player, getPlayersDefaultChannel(player));
+    		player.performCommand("mchannel join " + getPlayersDefaultChannel(player));
     		return getPlayersDefaultChannel(player);
     	} else {
     		return (plugin.playersChannel.get(player));

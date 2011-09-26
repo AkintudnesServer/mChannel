@@ -115,7 +115,7 @@ public class MCommandSender implements CommandExecutor {
                                     player.sendMessage("You have joined channel " + plugin.playersChannel.get(player) + ".");
                                     for (Player players : plugin.getServer().getOnlinePlayers()) {
                                         if (plugin.playersChannel.get(players).equals(plugin.playersChannel.get(player))) {
-                                            players.sendMessage(player + " has joined channel your channel.");
+                                            players.sendMessage(mChat.API.ParsePlayerName(player) + " has joined your channel.");
                                         }
                                     }
                                 } else {

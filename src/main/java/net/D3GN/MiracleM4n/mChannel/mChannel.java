@@ -6,8 +6,6 @@ import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.ensifera.animosity.craftirc.CraftIRC;
-import org.blockface.bukkitstats.CallHome;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
@@ -16,6 +14,8 @@ import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
+
+import org.blockface.bukkitstats.CallHome;
 
 public class mChannel extends JavaPlugin {
     PluginManager pm;
@@ -28,11 +28,7 @@ public class mChannel extends JavaPlugin {
     //Booleans
     Boolean mChatB = false;
     Boolean FactionsB = false;
-    Boolean IRCB = false;
     Boolean joinMessage = false;
-
-    //CraftIRC
-    CraftIRC cIRCHandle;
     
     // Coloring & Configuration
     Logger console = null;
@@ -97,7 +93,6 @@ public class mChannel extends JavaPlugin {
         if(mChatTest != null) {
             mChatB = true;
             getFactions();
-            getIRC();
             console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " mChat " + (mChatTest.getDescription().getVersion()) + " found now using.");
         } else {
             mChatB = false;
@@ -114,18 +109,6 @@ public class mChannel extends JavaPlugin {
             console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " Factions " + (FactionsTest.getDescription().getVersion()) + " found now using.");
         } else {
             FactionsB = false;
-        }
-    }
-
-    private void getIRC() {
-        PluginDescriptionFile pdfFile = getDescription();
-        Plugin IRCTest = this.getServer().getPluginManager().getPlugin("CraftIRC");
-        if(IRCTest != null) {
-            IRCB = true;
-            cIRCHandle = (CraftIRC)IRCTest;
-            console.log(Level.INFO, "[" + (pdfFile.getName()) + "]" + " CraftIRC " + (IRCTest.getDescription().getVersion()) + " found now using.");
-        } else {
-            IRCB = false;
         }
     }
     

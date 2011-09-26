@@ -18,7 +18,6 @@ public class MCConfigListener {
 	TreeMap<String, Object> defaultWorld = new TreeMap<String, Object>();
 	TreeMap<String, Object> defaultChunk = new TreeMap<String, Object>();
 	TreeMap<String, Object> defaultPassword = new TreeMap<String, Object>();
-    TreeMap<String, Object> defaultIRC = new TreeMap<String, Object>();
 
 	protected void defaultConfig() {
 		Configuration channel = plugin.channel;
@@ -58,18 +57,11 @@ public class MCConfigListener {
         defaultPassword.put("distance", 0);
         defaultPassword.put("password", "hello");
         defaultPassword.put("default", false);
-        defaultIRC.put("prefix", "&e");
-        defaultIRC.put("suffix", "&e");
-        defaultIRC.put("type", "irc");
-        defaultIRC.put("distance", 0);
-        defaultIRC.put("default", false);
-        defaultIRC.put("ircTag", "d3gnTag");
 		plugin.channelMap.put("Global", defaultGlobal);
 		plugin.channelMap.put("Local", defaultLocal);
 		plugin.channelMap.put("Private", defaultPrivate);
 		plugin.channelMap.put("World", defaultWorld);
 		plugin.channelMap.put("Chunk", defaultChunk);
-        plugin.channelMap.put("IRC", defaultIRC);
         plugin.channelMap.put("Password", defaultPassword);
 		channel.setProperty("mchannel", plugin.channelMap);
 		channel.save();
@@ -79,7 +71,6 @@ public class MCConfigListener {
 		defaultWorld.clear();
 		defaultChunk.clear();
 	    defaultPassword.clear();
-	    defaultIRC.clear();
 	}
 	
 	protected void checkConfig() {
@@ -120,18 +111,11 @@ public class MCConfigListener {
         defaultPassword.put("distance", 0);
         defaultPassword.put("password", "hello");
         defaultPassword.put("default", false);
-        defaultIRC.put("prefix", "&e");
-        defaultIRC.put("suffix", "&e");
-        defaultIRC.put("type", "irc");
-        defaultIRC.put("distance", 0);
-        defaultIRC.put("default", false);
-        defaultIRC.put("ircTag", "d3gnTag");
 		plugin.channelMap.put("Global", defaultGlobal);
 		plugin.channelMap.put("Local", defaultLocal);
 		plugin.channelMap.put("Private", defaultPrivate);
 		plugin.channelMap.put("World", defaultWorld);
 		plugin.channelMap.put("Chunk", defaultChunk);
-        plugin.channelMap.put("IRC", defaultIRC);
         plugin.channelMap.put("Password", defaultPassword);
 		channel.setProperty("mchannel", plugin.channelMap);
 		channel.save();
@@ -141,7 +125,6 @@ public class MCConfigListener {
 		defaultWorld.clear();
 		defaultChunk.clear();
 	    defaultPassword.clear();
-	    defaultIRC.clear();
 		}
 	}
 
