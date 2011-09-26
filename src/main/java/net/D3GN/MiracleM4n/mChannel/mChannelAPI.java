@@ -23,7 +23,7 @@ public class mChannelAPI {
 
     public String getPlayersDefaultChannel(Player player) {
     	for (Entry<String, Object> entry : plugin.channelNodeList.entrySet()) {
-            if (mChat.API.checkPermissions(player, "mchannel.default." + entry.getKey().replace(".default", "")))
+            if (mChat.API.checkPermissions(player, "mchannel.default." + entry.getKey().replace(".default", ""), false))
 				return entry.getKey().replace(".default", "");
 		}
     	return getGlobalDefaultChannel();
