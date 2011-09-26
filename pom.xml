@@ -21,7 +21,7 @@
         </repository>
         <repository>
             <id>d3gn</id>
-            <url>http://dev.d3gn.net/repository</url>
+            <url>http://repo.blockface.org/repository</url>
             <releases>
                 <updatePolicy>always</updatePolicy>
             </releases>
