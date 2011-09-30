@@ -2,6 +2,7 @@ package net.D3GN.MiracleM4n.mChannel;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +47,7 @@ public class mChannel extends JavaPlugin {
     HashMap<Player, String> playersChannel = new HashMap<Player, String>();
     HashMap<Player, String> playerInviteChannel = new HashMap<Player, String>();
     HashMap<Player, Boolean> playerInvite = new HashMap<Player, Boolean>();
+    HashMap<String, Set<Player>> channelLeaves = new HashMap<String, Set<Player>>();
 
     public void onEnable() {
         // Default plugin data
