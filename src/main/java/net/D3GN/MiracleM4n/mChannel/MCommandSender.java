@@ -386,6 +386,7 @@ public class MCommandSender implements CommandExecutor {
                             plugin.mAPI.setPlayersChannel(player, args[1]);
                             player.chat(message);
                             plugin.mAPI.setPlayersChannel(player, currentChannel);
+                            return true;
                         }
                     } else if (args[0].equalsIgnoreCase("create")) {
                         if (args[1].equalsIgnoreCase("type")) {
