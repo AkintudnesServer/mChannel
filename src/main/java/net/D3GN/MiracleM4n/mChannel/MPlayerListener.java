@@ -30,6 +30,13 @@ public class MPlayerListener extends PlayerListener {
                 plugin.getServer().broadcastMessage(mChat.API.ParsePlayerName(player) + " has joined channel " + pChannel + ".");
             }
 		}
+        if(plugin.channelLeaves.containsKey(pChannel)) {
+            for(Player playerx : plugin.getServer().getOnlinePlayers()) {
+                if(plugin.channelLeaves.get(pChannel).contains(playerx)) {
+                    event.getRecipients().remove(playerx);
+                }
+            }
+        }
 		if (plugin.mAPI.isChannelTypeLocal(pChannel)) {
 			for (Player players : plugin.getServer().getOnlinePlayers()) {
 				if (players.getWorld() != player.getWorld()) {
